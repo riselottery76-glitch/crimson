@@ -88,7 +88,7 @@ class CrimsonServer {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
             try {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
                 req.admin = decoded;
                 next();
             } catch (error) {
@@ -120,13 +120,21 @@ class CrimsonServer {
         });
 
         // ===== ADMIN ROUTES =====
+        // 🔴 FIXED LOGIN - Hardcoded credentials
         this.app.post('/api/admin/login', (req, res) => {
             const { username, password } = req.body;
-            if (username === process.env.ADMIN_USERNAME && 
-                password === process.env.ADMIN_PASSWORD) {
-                const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            
+            // HARDCODED CREDENTIALS - FIX FOR RAILWAY
+            const validUsername = 'admin';
+            const validPassword = 'crimsonadmin';
+            
+            console.log(`Login attempt: ${username} / ${password}`); // Debug log
+            
+            if (username === validUsername && password === validPassword) {
+                const token = jwt.sign({ admin: true }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '24h' });
                 res.json({ success: true, token });
             } else {
+                console.log('❌ Invalid login attempt');
                 res.status(401).json({ error: 'Invalid credentials' });
             }
         });
