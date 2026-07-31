@@ -305,33 +305,42 @@
 
         // ===== LOGIN =====
         async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('loginError');
 
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
+    console.log('🔐 Attempting login...');
+    console.log('Username:', username);
+    console.log('Password:', password);
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    token = data.token;
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    connectWebSocket();
-                    loadDashboard();
-                    loadVictims();
-                } else {
-                    errorDiv.textContent = '❌ Invalid credentials';
-                }
-            } catch (error) {
-                errorDiv.textContent = '❌ Connection error';
-            }
+    try {
+        const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        console.log('📡 Response status:', response.status);
+        const data = await response.json();
+        console.log('📦 Response data:', data);
+        
+        if (data.success) {
+            token = data.token;
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            connectWebSocket();
+            loadDashboard();
+            loadVictims();
+        } else {
+            errorDiv.textContent = '❌ Invalid credentials: ' + (data.error || 'Unknown error');
         }
+    } catch (error) {
+        console.error('Login error:', error);
+        errorDiv.textContent = '❌ Connection error: ' + error.message;
+    }
+}
 
         // ===== LOGOUT =====
         function logout() {
